@@ -30,5 +30,25 @@ jobs:
         run: mvn clean package
 
       - name: verify WAR file
-        run: ls -l target/   
+        run: ls -l target/  
+        
+      - name: check tomcat connection
+        run: |
+                 curl --fail --anyauth -u "${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}" \
+                 "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/list"
+
+          # Deploy to Tomcat
+      - name: deploy war to tomcat
+        run: | 
+                curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
+                  -T target/TrainBook-1.0.0-SNAPSHOT.war \
+                  "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"    
+
+
+        
+
+
+        
+
+        
       
